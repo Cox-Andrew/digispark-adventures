@@ -1,34 +1,34 @@
 const int morse_map[26] = {
-  0b10,
-  0b0001,
-  0b0101,
-  0b001,
-  0b0,
-  0b0100,
-  0b011,
-  0b0000,
-  0b00,
-  0b1110,
-  0b101,
-  0b0010,
-  0b11,
-  0b01,
-  0b111,
-  0b0110,
-  0b1011,
-  0b010,
-  0b000,
-  0b1,
-  0b100,
-  0b1000,
-  0b110,
-  0b1001,
+  0b110100,
+  0b1100000001,
+  0b1100010001,
+  0b11000001,
+  0b1100,
+  0b1100010000,
+  0b11000101,
+  0b1100000000,
+  0b110000,
+  0b1101010100,
+  0b11010001,
+  0b1100000100,
+  0b110101,
+  0b110001,
+  0b11010101,
+  0b1100010100,
+  0b1101000101,
+  0b11000100,
+  0b11000000,
   0b1101,
-  0b0011,
+  0b11010000,
+  0b1101000000,
+  0b11010100,
+  0b1101000001,
+  0b1101010001,
+  0b1100000101,
 };
 
 const int len = 16;
-const char words[len] = "SOS";
+const char words[len] = "HELLO WORLD";
 
 // the setup routine runs once when you press reset:
 void setup() {
@@ -47,6 +47,7 @@ void loop() {
   // letters 3
   // words 7
   
+  // iterate over the input string "words" one character at a time
   for (int i = 0; i < len; i++) {
     // check that we haven't reached the end of the string
     if (words[i] == '\0') break;
@@ -56,22 +57,29 @@ void loop() {
       continue;
     }
 
+    // fetch the morse sequence from the map
     int sequence = morse_map[words[i] - 'A'];
 
-    while (sequence) {
+    // iterate throught the morse symbols for this letter (until the end code 0b11)
+    while (sequence != 0b11) {
+      // check the final bit (dot/dash)
       int is_dash = sequence & 1;
-      sequence >>= 1;
+      // shift by 2 bits (as we use 2-bits for each more symbol)
+      sequence >>= 2;
 
+      // LED on
       digitalWrite(1, HIGH);
+      // stay on for appropriate duration
       if (is_dash) {
         delay(3 * UNIT);
       } else {
         delay(UNIT);
       }
+      // LED off
       digitalWrite(1, LOW);
 
       // delay between symbols (only if still same sequence)
-      if (sequence) delay(UNIT);
+      if (sequence != 0b11) delay(UNIT);
     }
 
     // delay between letters (only if still same word)
